@@ -118,7 +118,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { 
   getAuth, signInWithEmailAndPassword, 
-  onAuthStateChanged, signOut 
+  onAuthStateChanged, signOut, createUserWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 import { 
@@ -431,6 +431,42 @@ window.changeDisplayName = async function() {
   );
 
   alert("Updated!");
+}
+
+window.createAccount = async function() {
+
+  const email = document.getElementById("newEmail").value;
+  const password = document.getElementById("newPassword").value;
+  const displayName = document.getElementById("newDisplayName").value;
+
+  if (!email || !password || !displayName) {
+    alert("Fill all fields");
+    return;
+  }
+
+  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+  await setDoc(doc(db, "users", email), {
+    displayName: displayName,
+    online: false,
+    admin: false
+  });
+
+  alert("Account created!");
+}
+	
+window.openAdminPanel = function() {
+  messagesDiv.innerHTML = `
+    <h2>🛠 Admin Panel</h2>
+
+    <h3>Create Account</h3>
+
+    <input id="newEmail" placeholder="Email"><br><br>
+    <input id="newPassword" placeholder="Password"><br><br>
+    <input id="newDisplayName" placeholder="Display Name"><br><br>
+
+    <button onclick="createAccount()">Create Account</button>
+  `;
 }
 
 /* ---------------- INVITES / GROUPS / DMS ---------------- */
