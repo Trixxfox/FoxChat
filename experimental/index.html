@@ -96,6 +96,9 @@
 	
 	<button onclick="openSettings()">⚙ Settings</button><br>
     <button onclick="loadChat('onlinePanel')">🟢 Online Users</button>
+	<button id="adminBtn" onclick="openAdminPanel()" style="display:none">
+      🛠 Admin Panel
+    </button>
     <button onclick="logout()">Logout</button>
   </div>
 
@@ -195,6 +198,11 @@ window.login = function() {
     email.value,
     password.value
   ).catch(err => loginError.innerText = err.message);
+  const userDoc = await getDoc(doc(db, "users", user.email));
+
+  if (userDoc.data().admin === true) {
+    document.getElementById("adminBtn").style.display = "block";
+  }
 }
 
 window.logout = async function() {
