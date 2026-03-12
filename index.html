@@ -481,7 +481,48 @@ window.addEventListener("beforeunload", async () => {
     } catch {}
   }
 });
+function loadInvites() {
+  onSnapshot(collection(db, "invites"), snapshot => {
+    inviteSection.innerHTML = "<hr><h3>📨 Invites</h3>";
 
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      if (data.to !== auth.currentUser.email || data.status !== "pending") return;
+
+      const div = document.createElement("div");
+      div.style.background = "white";
+      div.style.padding = "5px";
+      div.style.marginBottom = "5px";
+
+      div.innerHTML = `
+        <small>${data.type === "dm" ? "DM" : "Group"} from ${data.from}</small><br>
+      `;
+
+      const acceptBtn = document.createElement("button");
+      acceptBtn.innerText = "Accept";
+      acceptBtn.onclick = async () => {
+        const chatRef = doc(db, "chats", data.chatId);
+        const chatSnap = await getDocs(query(collection(db, "chats")));
+        await updateDoc(chatRef, {
+          members: [...new Set([... (chatSnap.docs.find(d => d.id === data.chatId).data().members), auth.currentUser.email])]
+        });
+
+        await deleteDoc(doc(db, "invites", docSnap.id));
+        loadChats();
+      };
+
+      const declineBtn = document.createElement("button");
+      declineBtn.innerText = "Decline";
+      declineBtn.onclick = async () => {
+        await deleteDoc(doc(db, "invites", docSnap.id));
+      };
+
+      div.appendChild(acceptBtn);
+      div.appendChild(declineBtn);
+      inviteSection.appendChild(div);
+    });
+  });
+}
 </script>
 
 </body>
