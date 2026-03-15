@@ -516,31 +516,56 @@ function watchCalls(chatId) {
 }
 
 function watchIncomingCalls() {
-  const callsCollection = collection(db, "calls");
 
-  onSnapshot(callsCollection, snapshot => {
-    snapshot.forEach(docSnap => {
-      const data = docSnap.data();
+  onSnapshot(collection(db, "calls"), async snapshot => {
 
-      if (data.active && data.from !== auth.currentUser.email) {
-        const popup = document.getElementById("callPopup");
-        popup.style.display = "block";
+    for (const change of snapshot.docChanges()) {
 
-        document.getElementById("callerName").innerText = data.from.split("@")[0];
+      if (change.type !== "added" && change.type !== "modified") continue;
 
-        document.getElementById("answerCallBtn").onclick = async () => {
-          popup.style.display = "none";
-          currentChatId = docSnap.id;
-          startCallPanel();
-        };
+      const callData = change.doc.data();
+      const chatId = change.doc.id;
 
-        document.getElementById("declineCallBtn").onclick = async () => {
-          popup.style.display = "none";
-          await deleteDoc(doc(db, "calls", docSnap.id));
-        };
+      if (!callData.active) return;
+      if (callData.from === auth.currentUser.email) return;
+
+      // Check if user is part of this chat
+      const chatSnap = await getDoc(doc(db, "chats", chatId));
+
+      if (!chatSnap.exists()) return;
+
+      const chatData = chatSnap.data();
+
+      if (!chatData.members || !chatData.members.includes(auth.currentUser.email)) {
+        return;
       }
-    });
+
+      // Show popup
+      const popup = document.getElementById("callPopup");
+      popup.style.display = "block";
+
+      document.getElementById("callerName").innerText =
+        userCache[callData.from] || callData.from.split("@")[0];
+
+      document.getElementById("answerCallBtn").onclick = async () => {
+
+        popup.style.display = "none";
+
+        currentChatId = chatId;
+        startCallPanel();
+
+      };
+
+      document.getElementById("declineCallBtn").onclick = async () => {
+
+        popup.style.display = "none";
+
+      };
+
+    }
+
   });
+
 }
 
 let pc;
