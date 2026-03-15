@@ -255,8 +255,13 @@ async function ensureGlobalExists() {
 
 window.loadChat = function(chatId) {
   currentChatId = chatId;
-  messagesDiv.innerHTML = "";
-
+  messagesDiv.innerHTML = `
+    <div style="padding:5px;">
+      <button onclick="startCall()">📞 Call</button>
+      <span id="incomingCall"></span>
+    </div>
+  `;
+	
 if (chatId !== "onlinePanel") {
 
   const callBar = document.createElement("div");
@@ -544,7 +549,6 @@ let callDoc;
 
 window.startCallPanel = async function() {
 
-  currentChatId = "callPanel";
 
   messagesDiv.innerHTML = `
     <h3>📞 Voice Call</h3>
@@ -568,7 +572,7 @@ window.startCallPanel = async function() {
     document.getElementById("remoteAudio").srcObject = e.streams[0];
   };
 
-  callDoc = doc(db, "calls", "global");
+  callDoc = doc(db, "calls", currentChatId);
 
   const offer = await pc.createOffer();
   await pc.setLocalDescription(offer);
