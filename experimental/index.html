@@ -96,9 +96,6 @@
 	
 	<button onclick="openSettings()">⚙ Settings</button><br>
     <button onclick="loadChat('onlinePanel')">🟢 Online Users</button>
-	<button id="adminBtn" onclick="openAdminPanel()" style="display:none">
-      🛠 Admin Panel
-    </button>
     <button onclick="logout()">Logout</button>
   </div>
 
@@ -120,7 +117,6 @@ import {
   getAuth, signInWithEmailAndPassword, 
   onAuthStateChanged, signOut 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 import { 
   getFirestore, collection, addDoc, onSnapshot, 
@@ -199,11 +195,6 @@ window.login = function() {
     email.value,
     password.value
   ).catch(err => loginError.innerText = err.message);
-  const userDoc = await getDoc(doc(db, "users", user.email));
-
-  if (userDoc.data().admin === true) {
-    document.getElementById("adminBtn").style.display = "block";
-  }
 }
 
 window.logout = async function() {
@@ -434,42 +425,6 @@ window.changeDisplayName = async function() {
   alert("Updated!");
 }
 
-window.createAccount = async function() {
-
-  const email = document.getElementById("newEmail").value;
-  const password = document.getElementById("newPassword").value;
-  const displayName = document.getElementById("newDisplayName").value;
-
-  if (!email || !password || !displayName) {
-    alert("Fill all fields");
-    return;
-  }
-
-  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-
-  await setDoc(doc(db, "users", email), {
-    displayName: displayName,
-    online: false,
-    admin: false
-  });
-
-  alert("Account created!");
-}
-	
-window.openAdminPanel = function() {
-  messagesDiv.innerHTML = `
-    <h2>🛠 Admin Panel</h2>
-
-    <h3>Create Account</h3>
-
-    <input id="newEmail" placeholder="Email"><br><br>
-    <input id="newPassword" placeholder="Password"><br><br>
-    <input id="newDisplayName" placeholder="Display Name"><br><br>
-
-    <button onclick="createAccount()">Create Account</button>
-  `;
-}
-
 /* ---------------- INVITES / GROUPS / DMS ---------------- */
 /* YOUR ORIGINAL LOGIC BELOW UNCHANGED */
 
@@ -526,7 +481,48 @@ window.addEventListener("beforeunload", async () => {
     } catch {}
   }
 });
+function loadInvites() {
+  onSnapshot(collection(db, "invites"), snapshot => {
+    inviteSection.innerHTML = "<hr><h3>📨 Invites</h3>";
 
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      if (data.to !== auth.currentUser.email || data.status !== "pending") return;
+
+      const div = document.createElement("div");
+      div.style.background = "white";
+      div.style.padding = "5px";
+      div.style.marginBottom = "5px";
+
+      div.innerHTML = `
+        <small>${data.type === "dm" ? "DM" : "Group"} from ${data.from}</small><br>
+      `;
+
+      const acceptBtn = document.createElement("button");
+      acceptBtn.innerText = "Accept";
+      acceptBtn.onclick = async () => {
+        const chatRef = doc(db, "chats", data.chatId);
+        const chatSnap = await getDocs(query(collection(db, "chats")));
+        await updateDoc(chatRef, {
+          members: [...new Set([... (chatSnap.docs.find(d => d.id === data.chatId).data().members), auth.currentUser.email])]
+        });
+
+        await deleteDoc(doc(db, "invites", docSnap.id));
+        loadChats();
+      };
+
+      const declineBtn = document.createElement("button");
+      declineBtn.innerText = "Decline";
+      declineBtn.onclick = async () => {
+        await deleteDoc(doc(db, "invites", docSnap.id));
+      };
+
+      div.appendChild(acceptBtn);
+      div.appendChild(declineBtn);
+      inviteSection.appendChild(div);
+    });
+  });
+}
 </script>
 
 </body>
