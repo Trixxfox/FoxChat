@@ -110,7 +110,7 @@
 	<div id="typingIndicator" style="padding:5px;color:gray;"></div>
 
     <div id="inputArea">
-      <input id="messageInput" placeholder="Type message...">
+      <input id="messageInput" placeholder="Type message..." onkeydown="if(event.key==='Enter') sendMessage()">
       <button onclick="sendMessage()">Send</button>
     </div>
   </div>
