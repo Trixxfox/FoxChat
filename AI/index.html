@@ -107,6 +107,8 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
+const chat = document.getElementById("chat");
+
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
     console.log("Logged in as:", user.displayName || user.email);
@@ -119,8 +121,6 @@ firebase.auth().onAuthStateChanged((user) => {
     window.location.href = "/";
   }
 });
-  
-const chat = document.getElementById("chat");
 
 function addMessage(text, type) {
   const div = document.createElement("div");
