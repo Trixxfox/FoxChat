@@ -105,6 +105,18 @@ const firebaseConfig = {
   appId: "1:732701616574:web:abeb808acd5d5bbb3a71ef"
 };
 
+<!-- Firebase App (always required) -->
+  
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  
+<!-- Firebase Auth -->
+  
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  
+<!-- Firebase Firestore (if you want to save AI chats) -->
+  
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 firebase.initializeApp(firebaseConfig);
 
 const chat = document.getElementById("chat");
