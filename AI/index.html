@@ -94,12 +94,45 @@
 </div>
 
 <script>
+
+// your firebase config (copy EXACTLY from your main file)
+const firebaseConfig = {
+  apiKey: "AIzaSyBqLckLS5qxKZ06S0fsbQS_mWPVFi4E00w",
+  authDomain: "boshachat-acbbc.firebaseapp.com",
+  projectId: "boshachat-acbbc",
+  storageBucket: "boshachat-acbbc.firebasestorage.app",
+  messagingSenderId: "732701616574",
+  appId: "1:732701616574:web:abeb808acd5d5bbb3a71ef"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    console.log("Logged in as:", user.displayName || user.email);
+    
+    // You can store it globally
+    window.currentUser = user;
+
+  } else {
+    // Not logged in → send back to main page
+    window.location.href = "/";
+  }
+});
+  
 const chat = document.getElementById("chat");
 
 function addMessage(text, type) {
   const div = document.createElement("div");
   div.className = "msg " + type;
-  div.textContent = text;
+
+  if (type === "user") {
+    const name = window.currentUser?.displayName || "You";
+    div.textContent = name + ": " + text;
+  } else {
+    div.textContent = "BoshaBot: " + text;
+  }
+
   chat.appendChild(div);
   chat.scrollTop = chat.scrollHeight;
 }
