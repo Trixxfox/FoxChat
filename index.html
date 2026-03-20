@@ -338,6 +338,7 @@ window.sendMessage = async function() {
 /* ---------------- TYPING SYSTEM ---------------- */
 
 let typingTimeout;
+const typingSound = new Audio("typing.mp3");
 
 messageInput.addEventListener("input", async () => {
   if (!auth.currentUser) return;
@@ -381,6 +382,7 @@ function watchTyping(chatId) {
       if (typingUsers.length > 0) {
         typingDiv.innerHTML =
           `<i>${typingUsers.join(", ")} is typing...</i>`;
+		  typingSound.play();
       } else {
         typingDiv.innerHTML = "";
       }
