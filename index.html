@@ -304,18 +304,15 @@ async function loadChats() {
   const snapshot = await getDocs(collection(db, "chats"));
   dmList.innerHTML = "";
   groupList.innerHTML = "";
-
   snapshot.forEach(docSnap => {
     const data = docSnap.data();
-
     if (!data.members || !data.members.includes(auth.currentUser.email)) return;
-
-if (data.type === "dm") {
-  const btn = document.createElement("button");
-  btn.innerText = "DM Chat";
-  btn.onclick = () => loadChat(docSnap.id);
-  dmList.appendChild(btn);
-
+    if (data.type === "dm") {
+      const btn = document.createElement("button");
+      btn.innerText = "DM Chat";
+      btn.onclick = () => loadChat(docSnap.id);
+      dmList.appendChild(btn);
+    }
     if (data.type === "group") {
       const btn = document.createElement("button");
       btn.innerText = "👥 " + data.name;
