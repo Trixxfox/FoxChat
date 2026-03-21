@@ -142,11 +142,14 @@ function addMessage(text, type) {
 async function getAIResponse(message) {
   const response = await fetch("/.netlify/functions/chat", {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json" // 👈 THIS FIXES IT
+    },
     body: JSON.stringify({ message })
   });
 
   const data = await response.json();
-  return data.reply;
+  return data.reply || data.error;
 }
   
 async function send() {
