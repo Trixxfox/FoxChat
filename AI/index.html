@@ -143,9 +143,11 @@ async function getAIResponse(message) {
   const response = await fetch("/.netlify/functions/chat", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json" // 👈 THIS FIXES IT
+      "Content-Type": "application/json"
     },
-    body: JSON.stringify({ message })
+    body: JSON.stringify({
+      message: message
+    })
   });
 
   const data = await response.json();
