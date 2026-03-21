@@ -1,6 +1,14 @@
 export async function handler(event) {
   try {
-    const body = JSON.parse(event.body);
+    // 👇 SAFE parsing (won’t crash)
+    const body = event.body ? JSON.parse(event.body) : {};
+
+    if (!body.message) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: "No message provided" })
+      };
+    }
 
     const response = await fetch(
       "https://router.huggingface.co/v1/chat/completions",
@@ -24,8 +32,6 @@ export async function handler(event) {
 
     const data = await response.json();
 
-    console.log("HF RESPONSE:", data); // 👈 IMPORTANT
-
     return {
       statusCode: 200,
       body: JSON.stringify({
@@ -34,12 +40,12 @@ export async function handler(event) {
     };
 
   } catch (err) {
-    console.error("REAL ERROR:", err); // 👈 THIS IS WHAT WE NEED
+    console.error("ERROR:", err);
 
     return {
       statusCode: 500,
       body: JSON.stringify({
-        error: err.message // 👈 show real error
+        error: err.message
       })
     };
   }
