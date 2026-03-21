@@ -71,6 +71,10 @@
       margin: auto;
       text-align: center;
     }
+	#sendButton {
+	  border: 2px solid black;
+	  border-radius: 10px;
+	}
   </style>
 </head>
 <body>
@@ -113,7 +117,7 @@
 
     <div id="inputArea">
       <input id="messageInput" placeholder="Type message..." onkeydown="if(event.key==='Enter') sendMessage()">
-      <button onclick="sendMessage()">Send</button>
+      <button id="sendButton" onclick="sendMessage()">Send</button>
     </div>
   </div>
 
