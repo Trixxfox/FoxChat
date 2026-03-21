@@ -23,8 +23,8 @@ export async function handler(event) {
     );
 
     const data = await response.json();
-    
-    console.log("HF RESPONSE:", JSON.stringify(data, null, 2));
+
+    console.log("HF RESPONSE:", data); // 👈 IMPORTANT
 
     return {
       statusCode: 200,
@@ -34,9 +34,13 @@ export async function handler(event) {
     };
 
   } catch (err) {
+    console.error("REAL ERROR:", err); // 👈 THIS IS WHAT WE NEED
+
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Server error 😬" })
+      body: JSON.stringify({
+        error: err.message // 👈 show real error
+      })
     };
   }
 }
