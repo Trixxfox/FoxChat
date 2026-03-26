@@ -5,7 +5,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.2.1/firebase-ai.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.2.1/firebase-ai.js" type="module"></script>
   <style>
     body {
       margin: 0;
@@ -96,7 +96,7 @@
   <button onclick="send()">Send</button>
 </div>
 
-<script type="module">
+<script>
 
 // your firebase config (copy EXACTLY from your main file)
 const firebaseConfig = {
