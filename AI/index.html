@@ -2,7 +2,6 @@
 <html>
 <head>
   <title>BoshaBot 🤖</title>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script type="importmap">
@@ -104,6 +103,7 @@
 </div>
 
 <script type="module">
+import { initializeApp } from "firebase/app";
 import { getAI, getGenerativeModel, GoogleAIBackend } from "ai-logic";
 
 // your firebase config (copy EXACTLY from your main file)
@@ -116,8 +116,7 @@ const firebaseConfig = {
   appId: "1:732701616574:web:abeb808acd5d5bbb3a71ef"
 };
 
-firebase.initializeApp(firebaseConfig);
-app = firebase.initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
 // Initialize the Gemini Developer API backend service
 const ai = getAI(app, { backend: new GoogleAIBackend() });
