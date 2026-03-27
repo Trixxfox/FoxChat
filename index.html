@@ -167,8 +167,6 @@ const messageInput = document.getElementById("messageInput");
 const hr = document.getElementById("invites");
 const groupList = document.getElementById("groupList");
 const dmList = document.getElementById("dmList");
-const now = Timestamp.now()
-const ms = now.toMillis()
 
 const inviteSection = document.createElement("div");
 inviteSection.innerHTML = "<hr><h3>📨 Invites</h3>";
@@ -348,7 +346,7 @@ window.sendMessage = async function() {
   await addDoc(collection(db, "chats", currentChatId, "messages"), {
     user: auth.currentUser.email,
     text: messageInput.value,
-    timestamp: ms
+    Timestamp.now().toMillis()
   });
 
   messageInput.value = "";
