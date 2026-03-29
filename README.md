@@ -1,2 +1,2 @@
-# BoshaChat
-> I have nothing to say lol `BoshaChat` is _so_ good though.
+# FoxChat
+> I have nothing to say lol `FoxChat` is _so_ good though.
